@@ -21,14 +21,24 @@ export function GeneratorClient() {
   return (
     <div className="grid gap-10 lg:grid-cols-[1.2fr_1.5fr] items-start">
       {/* Seleção */}
-      <div className="glass-card p-6">
-        <div className="mb-6 flex items-center gap-3 border-b border-border/50 pb-4">
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary/20 text-primary">
-            <span className="text-sm font-bold">1</span>
+      <div className="glass-card p-6 min-w-0">
+        <div className="mb-6 flex items-center justify-between border-b border-border/50 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex size-8 items-center justify-center rounded-full bg-primary/20 text-primary">
+              <span className="text-sm font-bold">1</span>
+            </div>
+            <h2 className="text-xl font-semibold tracking-tight">
+              Escolha sua Stack
+            </h2>
           </div>
-          <h2 className="text-xl font-semibold tracking-tight">
-            Escolha sua Stack
-          </h2>
+          {selected.length > 0 && (
+            <button
+              onClick={() => setSelected([])}
+              className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+            >
+              Limpar escolhas
+            </button>
+          )}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
@@ -87,7 +97,7 @@ export function GeneratorClient() {
       </div>
 
       {/* Resultado */}
-      <div className="glass-card p-1 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+      <div className="glass-card p-1 shadow-[0_8px_30px_rgba(0,0,0,0.12)] min-w-0">
         <div className="rounded-xl bg-background/40 p-6 h-full min-h-[400px] flex flex-col">
           <div className="mb-6 flex items-center gap-3 border-b border-border/50 pb-4">
             <div className="flex size-8 items-center justify-center rounded-full bg-primary/20 text-primary">

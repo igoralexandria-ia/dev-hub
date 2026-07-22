@@ -1,19 +1,19 @@
 import { cn } from '@/lib/utils'
-import { levelLabels, type Level } from '@/lib/data'
+import type { Level } from '@/types/models'
+import { levelLabels } from '@/lib/data'
 
 const styles: Record<Level, string> = {
-  iniciante: 'border-chart-1/30 bg-chart-1/10 text-chart-1',
-  intermediario: 'border-chart-2/30 bg-chart-2/10 text-chart-2',
-  avancado: 'border-chart-4/30 bg-chart-4/10 text-chart-4',
+  iniciante: 'bg-green-500/10 text-green-500 border-green-500/20',
+  intermediario: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+  avancado: 'bg-red-500/10 text-red-500 border-red-500/20',
 }
 
-export function LevelBadge({
-  level,
-  className,
-}: {
+interface LevelBadgeProps {
   level: Level
   className?: string
-}) {
+}
+
+export function LevelBadge({ level, className }: LevelBadgeProps) {
   return (
     <span
       className={cn(

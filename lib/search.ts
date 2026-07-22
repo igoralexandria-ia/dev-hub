@@ -1,11 +1,5 @@
-import {
-  allCommands,
-  stacks,
-  technologies,
-  type CommandWithTech,
-  type Stack,
-  type Technology,
-} from '@/lib/data'
+import { technologies, stacks, allCommands } from '@/lib/data'
+import type { Stack, Technology, CommandWithTech } from '@/types/models'
 
 function normalize(value: string) {
   return value

@@ -2,6 +2,8 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Fira_Code } from 'next/font/google'
 import { SiteHeader } from '@/components/site-header'
+import { SidebarLayout } from '@/components/sidebar-layout'
+import { AuthProvider } from '@/components/auth-provider'
 import './globals.css'
 
 const fontSans = Inter({
@@ -26,8 +28,6 @@ export const viewport: Viewport = {
   themeColor: '#0c0f14',
 }
 
-import { SidebarLayout } from '@/components/sidebar-layout'
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,10 +39,12 @@ export default function RootLayout({
       className={`dark ${fontSans.variable} ${fontMono.variable} bg-background`}
     >
       <body className="min-h-screen font-sans antialiased flex flex-col">
-        <SiteHeader />
-        <SidebarLayout>
-          {children}
-        </SidebarLayout>
+        <AuthProvider>
+          <SiteHeader />
+          <SidebarLayout>
+            {children}
+          </SidebarLayout>
+        </AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

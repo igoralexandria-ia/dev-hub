@@ -1,41 +1,37 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { getOrCreateSessionId } from "@/lib/session"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/lib/auth"
 
 export const dynamic = "force-dynamic"
 
-type FavoriteDTO = {
-  id: string
-  type: string
-  refId: string
-  createdAt: string
-}
-
-function toDTO(row: {
-  id: string
-  itemType: string
-  itemId: string
-  createdAt: Date
-}): FavoriteDTO {
-  return {
-    id: row.id,
-    type: row.itemType,
-    refId: row.itemId,
-    createdAt: row.createdAt.toISOString(),
-  }
-}
-
 export async function GET() {
-  const sessionId = await getOrCreateSessionId()
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ favorites: [] })
+  }
+
   const rows = await prisma.favorite.findMany({
-    where: { sessionId },
+    where: { userId: session.user.id },
+    include: { command: true },
     orderBy: { createdAt: "desc" },
   })
-  return NextResponse.json({ favorites: rows.map(toDTO) })
+
+  return NextResponse.json({ 
+    favorites: rows.map(row => ({
+      id: row.id,
+      type: "command",
+      refId: row.command.commandId,
+      createdAt: row.createdAt.toISOString()
+    })) 
+  })
 }
 
 export async function POST(request: Request) {
-  const sessionId = await getOrCreateSessionId()
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   let body: { type?: string; refId?: string }
   try {
@@ -45,17 +41,21 @@ export async function POST(request: Request) {
   }
 
   const { type, refId } = body
-  if (
-    (type !== "command" && type !== "stack") ||
-    typeof refId !== "string" ||
-    refId.length === 0
-  ) {
+  if (type !== "command" || typeof refId !== "string" || refId.length === 0) {
     return NextResponse.json({ error: "Parâmetros inválidos" }, { status: 400 })
+  }
+
+  const command = await prisma.command.findUnique({
+    where: { commandId: refId }
+  })
+
+  if (!command) {
+    return NextResponse.json({ error: "Comando não encontrado no banco de dados. Por favor, execute o seed." }, { status: 404 })
   }
 
   const existing = await prisma.favorite.findUnique({
     where: {
-      sessionId_itemType_itemId: { sessionId, itemType: type, itemId: refId },
+      userId_commandId: { userId: session.user.id, commandId: command.id },
     },
   })
 
@@ -63,13 +63,22 @@ export async function POST(request: Request) {
     await prisma.favorite.delete({ where: { id: existing.id } })
   } else {
     await prisma.favorite.create({
-      data: { sessionId, itemType: type, itemId: refId },
+      data: { userId: session.user.id, commandId: command.id },
     })
   }
 
   const rows = await prisma.favorite.findMany({
-    where: { sessionId },
+    where: { userId: session.user.id },
+    include: { command: true },
     orderBy: { createdAt: "desc" },
   })
-  return NextResponse.json({ favorites: rows.map(toDTO) })
+
+  return NextResponse.json({ 
+    favorites: rows.map(row => ({
+      id: row.id,
+      type: "command",
+      refId: row.command.commandId,
+      createdAt: row.createdAt.toISOString()
+    })) 
+  })
 }

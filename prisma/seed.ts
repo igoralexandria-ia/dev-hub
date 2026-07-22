@@ -28,7 +28,7 @@ async function main() {
         tutorials: tech.tutorials ? (tech.tutorials as any) : null,
       },
     })
-    console.log(`✅ Tecnologia criada: ${createdTech.name}`)
+    console.log(`Tecnologia criada: ${createdTech.name}`)
 
     for (const cmd of tech.commands) {
       await prisma.command.create({

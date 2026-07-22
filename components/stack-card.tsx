@@ -1,9 +1,14 @@
 import Link from 'next/link'
 import { Layers, ArrowRight } from 'lucide-react'
-import { getTechnology, type Stack } from '@/lib/data'
+import type { Stack } from '@/types/models'
+import { getTechnology } from '@/lib/data'
 import { LevelBadge } from '@/components/level-badge'
 
-export function StackCard({ stack }: { stack: Stack }) {
+interface StackCardProps {
+  stack: Stack
+}
+
+export function StackCard({ stack }: StackCardProps) {
   return (
     <div className="glass-card group flex flex-col p-6 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

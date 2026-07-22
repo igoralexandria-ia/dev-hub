@@ -1,79 +1,4 @@
-export type Level = 'iniciante' | 'intermediario' | 'avancado'
-
-export type CommandOption = {
-  flag: string
-  description: string
-}
-
-export type OsCommand = {
-  windows?: string
-  mac?: string
-  linux?: string
-  default: string
-}
-
-export type Command = {
-  id: string
-  label: string
-  command: string | OsCommand
-  description: string
-  whenToUse: string
-  options?: CommandOption[]
-  example?: string
-  tags: string[]
-}
-
-export type TutorialStep = {
-  title: string
-  description: string
-  command?: string | OsCommand
-  link?: { url: string; label: string }
-}
-
-export type TutorialContent = {
-  windows: TutorialStep[]
-  mac: TutorialStep[]
-  linux: TutorialStep[]
-}
-
-export type Tutorial = {
-  id: string
-  title: string
-  description: string
-  content: TutorialContent
-}
-
-export type Technology = {
-  slug: string
-  name: string
-  category: string
-  tagline: string
-  description: string
-  level: Level
-  color: string
-  iconUrl: string
-  tags: string[]
-  docsUrl: string
-  commands: Command[]
-  tutorials?: Tutorial[]
-}
-
-export type StackStep = {
-  title: string
-  command?: string
-  description: string
-}
-
-export type Stack = {
-  slug: string
-  name: string
-  description: string
-  technologies: string[]
-  level: Level
-  tags: string[]
-  popularity: number
-  steps: StackStep[]
-}
+import type { Technology, Stack, Level, CommandWithTech } from '@/types/models'
 
 export const levelLabels: Record<Level, string> = {
   iniciante: 'Iniciante',
@@ -758,6 +683,674 @@ export const technologies: Technology[] = [
       },
     ],
   }
+,
+  {
+    "slug": "prisma",
+    "name": "Prisma ORM",
+    "category": "Banco de Dados",
+    "tagline": "O ORM Next-Generation para Node.js e TS",
+    "description": "Prisma é um ORM que elimina a necessidade de escrever SQL puro, mapeando tabelas em objetos. Muito usado em projetos Next.js por gerar tipagem automática e garantir type-safety na busca de dados.",
+    "level": "intermediario",
+    "color": "#2d3748",
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prisma/prisma-original.svg",
+    "tags": [
+      "database",
+      "orm",
+      "sql",
+      "neon",
+      "postgresql"
+    ],
+    "docsUrl": "https://www.prisma.io/docs",
+    "commands": [
+      {
+        "id": "prisma-init",
+        "label": "Inicializar Prisma",
+        "command": "npx prisma init",
+        "description": "Cria a pasta prisma com o schema inicial e o arquivo .env vazio.",
+        "whenToUse": "No começo da integração do banco de dados ao projeto.",
+        "tags": [
+          "setup",
+          "init"
+        ]
+      },
+      {
+        "id": "prisma-db-push",
+        "label": "Sincronizar Schema (Push)",
+        "command": "npx prisma db push",
+        "description": "Cria/Sincroniza as tabelas no Neon direto do schema.prisma.",
+        "whenToUse": "Sempre que você alterar o model no schema.prisma e quiser testar no banco.",
+        "tags": [
+          "sync",
+          "db"
+        ]
+      },
+      {
+        "id": "prisma-migrate",
+        "label": "Criar Migração Oficial",
+        "command": "npx prisma migrate dev",
+        "description": "Cria um arquivo de histórico (migration) SQL e aplica no banco Neon.",
+        "whenToUse": "Quando a estrutura da tabela está madura e você quer salvar o histórico oficial.",
+        "tags": [
+          "migrate",
+          "sql"
+        ]
+      },
+      {
+        "id": "prisma-studio",
+        "label": "Abrir Prisma Studio",
+        "command": "npx prisma studio",
+        "description": "Abre uma interface web local para você visualizar e editar os dados salvos no banco.",
+        "whenToUse": "Para ver se os dados entraram corretamente no banco de dados.",
+        "tags": [
+          "studio",
+          "gui"
+        ]
+      },
+      {
+        "id": "prisma-downgrade",
+        "label": "Downgrade Prisma (v5)",
+        "command": "npm install prisma@5 @prisma/client@5",
+        "description": "Faz o downgrade para a versão 5.22, que é a mais estável para configurações sem o uso do prisma.config.ts exigido na v7.",
+        "whenToUse": "Se você encontrar erros de configuração \"url\" na versão 7.",
+        "tags": [
+          "downgrade",
+          "fix"
+        ]
+      },
+      {
+        "id": "prisma-seed",
+        "label": "Rodar Script de Seed",
+        "command": "npx tsx prisma/seed.ts",
+        "description": "Executa um script typescript avulso para popular o banco de dados com dados falsos/iniciais.",
+        "whenToUse": "Após criar o banco para não deixá-lo vazio.",
+        "tags": [
+          "seed",
+          "mock"
+        ]
+      },
+      {
+        "id": "prisma-update-data",
+        "label": "Rodar Script de Atualização (Custom)",
+        "command": "npx tsx update_data.ts",
+        "description": "Executa um script customizado para injetar dados falsos nas tabelas simuladas.",
+        "whenToUse": "Script específico do projeto DevHub para atualizar lib/data.ts no banco.",
+        "tags": [
+          "seed",
+          "custom"
+        ]
+      }
+    ],
+    "tutorials": [
+      {
+        "id": "tut-prisma-neon-completo",
+        "title": "Neon + Prisma: Como Funciona na Prática?",
+        "description": "O que são essas ferramentas e como elas se integram num projeto Next.js.",
+        "content": {
+          "windows": [
+            {
+              "title": "O que é o Neon Database?",
+              "description": "É um banco de dados PostgreSQL totalmente gerenciado e sem servidor (serverless). Ele guarda as informações da sua aplicação em nuvem, escala automaticamente conforme a demanda e suporta ramificações (branching)."
+            },
+            {
+              "title": "O que é o Prisma ORM?",
+              "description": "É uma ferramenta de mapeamento objeto-relacional. Ele serve para eliminar a necessidade de escrever comandos SQL crus. Em vez de digitar SQL, você usa funções em JavaScript/TypeScript para buscar, criar ou atualizar dados com tipagem automática."
+            },
+            {
+              "title": "1. Criar Banco (Neon)",
+              "description": "Você cria uma conta na Plataforma Neon e gera uma connection string (um link de acesso com senha)."
+            },
+            {
+              "title": "2. Configuração (Projeto)",
+              "description": "Você cola essa connection string no arquivo .env do seu projeto Next.js em DATABASE_URL."
+            },
+            {
+              "title": "3. Modelagem (schema.prisma)",
+              "description": "Você define as tabelas (models). Ex: \\nmodel User {\\n  id String @id @default(uuid())\\n  email String @unique\\n}"
+            },
+            {
+              "title": "4. Sincronização e Migração",
+              "description": "Você roda \"npx prisma db push\" ou \"npx prisma migrate dev\". O Prisma lê seu schema e automaticamente cria as tabelas no Neon."
+            },
+            {
+              "title": "5. Executando Operações",
+              "description": "Nos Server/API Components do Next.js, você usa o cliente do Prisma: \\nconst users = await prisma.user.findMany()"
+            }
+          ],
+          "mac": [
+            {
+              "title": "O que é o Neon Database?",
+              "description": "É um banco de dados PostgreSQL totalmente gerenciado e sem servidor (serverless). Ele guarda as informações da sua aplicação em nuvem, escala automaticamente conforme a demanda e suporta ramificações (branching)."
+            },
+            {
+              "title": "O que é o Prisma ORM?",
+              "description": "É uma ferramenta de mapeamento objeto-relacional. Ele serve para eliminar a necessidade de escrever comandos SQL crus. Em vez de digitar SQL, você usa funções em JavaScript/TypeScript para buscar, criar ou atualizar dados com tipagem automática."
+            },
+            {
+              "title": "1. Criar Banco (Neon)",
+              "description": "Você cria uma conta na Plataforma Neon e gera uma connection string (um link de acesso com senha)."
+            },
+            {
+              "title": "2. Configuração (Projeto)",
+              "description": "Você cola essa connection string no arquivo .env do seu projeto Next.js em DATABASE_URL."
+            },
+            {
+              "title": "3. Modelagem (schema.prisma)",
+              "description": "Você define as tabelas (models). Ex: \\nmodel User {\\n  id String @id @default(uuid())\\n  email String @unique\\n}"
+            },
+            {
+              "title": "4. Sincronização e Migração",
+              "description": "Você roda \"npx prisma db push\" ou \"npx prisma migrate dev\". O Prisma lê seu schema e automaticamente cria as tabelas no Neon."
+            },
+            {
+              "title": "5. Executando Operações",
+              "description": "Nos Server/API Components do Next.js, você usa o cliente do Prisma: \\nconst users = await prisma.user.findMany()"
+            }
+          ],
+          "linux": [
+            {
+              "title": "O que é o Neon Database?",
+              "description": "É um banco de dados PostgreSQL totalmente gerenciado e sem servidor (serverless). Ele guarda as informações da sua aplicação em nuvem, escala automaticamente conforme a demanda e suporta ramificações (branching)."
+            },
+            {
+              "title": "O que é o Prisma ORM?",
+              "description": "É uma ferramenta de mapeamento objeto-relacional. Ele serve para eliminar a necessidade de escrever comandos SQL crus. Em vez de digitar SQL, você usa funções em JavaScript/TypeScript para buscar, criar ou atualizar dados com tipagem automática."
+            },
+            {
+              "title": "1. Criar Banco (Neon)",
+              "description": "Você cria uma conta na Plataforma Neon e gera uma connection string (um link de acesso com senha)."
+            },
+            {
+              "title": "2. Configuração (Projeto)",
+              "description": "Você cola essa connection string no arquivo .env do seu projeto Next.js em DATABASE_URL."
+            },
+            {
+              "title": "3. Modelagem (schema.prisma)",
+              "description": "Você define as tabelas (models). Ex: \\nmodel User {\\n  id String @id @default(uuid())\\n  email String @unique\\n}"
+            },
+            {
+              "title": "4. Sincronização e Migração",
+              "description": "Você roda \"npx prisma db push\" ou \"npx prisma migrate dev\". O Prisma lê seu schema e automaticamente cria as tabelas no Neon."
+            },
+            {
+              "title": "5. Executando Operações",
+              "description": "Nos Server/API Components do Next.js, você usa o cliente do Prisma: \\nconst users = await prisma.user.findMany()"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "slug": "shadcnui",
+    "name": "Shadcn UI",
+    "category": "Componentes UI",
+    "tagline": "Componentes lindos que você pode copiar e colar",
+    "description": "Componentes acessíveis e customizáveis. Não é uma dependência NPM que você instala, mas sim código que é copiado para o seu projeto e ajustado livremente.",
+    "level": "intermediario",
+    "color": "#000000",
+    "iconUrl": "https://ui.shadcn.com/favicon.ico",
+    "tags": [
+      "ui",
+      "components",
+      "radix",
+      "tailwind"
+    ],
+    "docsUrl": "https://ui.shadcn.com/docs",
+    "commands": [
+      {
+        "id": "shadcn-init",
+        "label": "Inicializar Shadcn",
+        "command": "npx shadcn@latest init",
+        "description": "Configura o projeto com a estrutura do Shadcn e Tailwind.",
+        "whenToUse": "No começo de um novo projeto UI.",
+        "tags": [
+          "init"
+        ]
+      },
+      {
+        "id": "shadcn-add",
+        "label": "Adicionar Componente",
+        "command": "npx shadcn@latest add button",
+        "description": "Baixa o componente específico (ex: button) para a sua pasta components/ui.",
+        "whenToUse": "Sempre que precisar de um novo elemento visual na tela.",
+        "tags": [
+          "add",
+          "component"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "lucide",
+    "name": "Lucide Icons",
+    "category": "Ícones",
+    "tagline": "Ícones bonitos e consistentes",
+    "description": "Um fork comunitário do Feather Icons com milhares de ícones vetoriais perfeitos para interfaces modernas.",
+    "level": "iniciante",
+    "color": "#f43f5e",
+    "iconUrl": "https://lucide.dev/logo.svg",
+    "tags": [
+      "icons",
+      "svg",
+      "ui"
+    ],
+    "docsUrl": "https://lucide.dev/guide/",
+    "commands": [
+      {
+        "id": "lucide-install",
+        "label": "Instalar Lucide no React",
+        "command": "npm install lucide-react",
+        "description": "Instala o pacote de ícones em formato de componentes React.",
+        "whenToUse": "Quando precisar de ícones na sua aplicação Next.js ou React.",
+        "tags": [
+          "install",
+          "icons"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "materialui",
+    "name": "Material UI (MUI)",
+    "category": "Componentes UI",
+    "tagline": "Componentes React rápidos e robustos",
+    "description": "A biblioteca baseada no Material Design do Google, oferecendo um arsenal gigante de componentes prontos para uso corporativo.",
+    "level": "intermediario",
+    "color": "#007fff",
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/materialui/materialui-original.svg",
+    "tags": [
+      "ui",
+      "react",
+      "google",
+      "components"
+    ],
+    "docsUrl": "https://mui.com/material-ui/getting-started/",
+    "commands": [
+      {
+        "id": "mui-install",
+        "label": "Instalar Material UI",
+        "command": "npm install @mui/material @emotion/react @emotion/styled",
+        "description": "Instala os pacotes do Material UI e sua dependência de estilo (Emotion).",
+        "whenToUse": "Ao configurar o MUI num projeto que não usa Tailwind.",
+        "tags": [
+          "install",
+          "mui"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "chakraui",
+    "name": "Chakra UI",
+    "category": "Componentes UI",
+    "tagline": "Construa aplicações acessíveis com velocidade",
+    "description": "Biblioteca simples, modular e acessível de componentes que facilita muito a criação de aplicações React.",
+    "level": "intermediario",
+    "color": "#319795",
+    "iconUrl": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/chakraui/chakraui-original.svg",
+    "tags": [
+      "ui",
+      "react",
+      "components"
+    ],
+    "docsUrl": "https://chakra-ui.com/docs/getting-started",
+    "commands": [
+      {
+        "id": "chakra-install",
+        "label": "Instalar Chakra UI",
+        "command": "npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion",
+        "description": "Instala o Chakra e suas dependências essenciais de estilo e animação.",
+        "whenToUse": "Ao iniciar a construção da interface com Chakra UI.",
+        "tags": [
+          "install",
+          "chakra"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "flowbite",
+    "name": "Flowbite",
+    "category": "Componentes UI",
+    "tagline": "Componentes baseados em Tailwind",
+    "description": "Biblioteca open-source que aproveita a força do Tailwind CSS e adiciona scripts interativos.",
+    "level": "iniciante",
+    "color": "#1a56db",
+    "iconUrl": "https://flowbite.com/docs/images/logo.svg",
+    "tags": [
+      "ui",
+      "tailwind",
+      "components"
+    ],
+    "docsUrl": "https://flowbite.com/docs/getting-started/introduction/",
+    "commands": [
+      {
+        "id": "flowbite-install",
+        "label": "Instalar Flowbite",
+        "command": "npm install flowbite flowbite-react",
+        "description": "Instala o plugin Flowbite para Tailwind e os componentes React.",
+        "whenToUse": "Se você usa Tailwind e quer componentes interativos como Dropdowns e Modais prontos.",
+        "tags": [
+          "install",
+          "tailwind"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "fontawesome",
+    "name": "Font Awesome",
+    "category": "Ícones",
+    "tagline": "A biblioteca de ícones mais famosa da web",
+    "description": "Milhares de ícones em fontes SVG e pacotes fáceis de integrar em qualquer projeto web ou desktop.",
+    "level": "iniciante",
+    "color": "#339af0",
+    "iconUrl": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/master/svgs/brands/font-awesome.svg",
+    "tags": [
+      "icons",
+      "svg",
+      "fonts"
+    ],
+    "docsUrl": "https://fontawesome.com/docs",
+    "commands": [
+      {
+        "id": "fa-install",
+        "label": "Instalar Font Awesome React",
+        "command": "npm i --save @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome",
+        "description": "Instala o core e os ícones sólidos grátis para React.",
+        "whenToUse": "Quando preferir usar ícones clássicos em vez de Lucide.",
+        "tags": [
+          "install",
+          "icons"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "googlefonts",
+    "name": "Google Fonts & Assets",
+    "category": "Tipografia & Assets",
+    "tagline": "Fontes e ícones fantásticos do Google",
+    "description": "Repositório gigantesco de fontes gratuitas e ícones (Material Symbols). Links úteis adicionais: Flaticon, Magnific, Icons8 para assets criativos.",
+    "level": "iniciante",
+    "color": "#ea4335",
+    "iconUrl": "https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg",
+    "tags": [
+      "fonts",
+      "assets",
+      "design",
+      "icons8",
+      "flaticon"
+    ],
+    "docsUrl": "https://fonts.google.com/",
+    "commands": [],
+    "tutorials": [
+      {
+        "id": "tut-assets",
+        "title": "Onde encontrar os melhores Assets Grátis",
+        "description": "Links e dicas de onde buscar ícones, fontes e imagens para deixar seu projeto lindo.",
+        "content": {
+          "windows": [
+            {
+              "title": "Google Fonts",
+              "description": "O melhor lugar para encontrar tipografias completas e gratuitas (Inter, Roboto, Poppins, etc). No Next.js, use o pacote \"next/font/google\".",
+              "link": { "url": "https://fonts.google.com", "label": "Acessar Google Fonts" }
+            },
+            {
+              "title": "Flaticon",
+              "description": "Maior repositório de ícones vetoriais criativos (estilo cartoon, 3D, linha). Excelente para ilustrações de marketing.",
+              "link": { "url": "https://www.flaticon.com", "label": "Acessar Flaticon" }
+            },
+            {
+              "title": "Icons8",
+              "description": "Ícones consistentes cobrindo todos os estilos do iOS, Windows e Material Design. Oferece ilustrações em 3D também.",
+              "link": { "url": "https://icons8.com", "label": "Acessar Icons8" }
+            },
+            {
+              "title": "Material Symbols",
+              "description": "Os novos ícones dinâmicos do Google, permitindo alterar espessura e preenchimento via CSS."
+            }
+          ],
+          "mac": [
+            {
+              "title": "Google Fonts",
+              "description": "O melhor lugar para encontrar tipografias completas e gratuitas (Inter, Roboto, Poppins, etc). No Next.js, use o pacote \"next/font/google\".",
+              "link": { "url": "https://fonts.google.com", "label": "Acessar Google Fonts" }
+            },
+            {
+              "title": "Flaticon",
+              "description": "Maior repositório de ícones vetoriais criativos (estilo cartoon, 3D, linha). Excelente para ilustrações de marketing.",
+              "link": { "url": "https://www.flaticon.com", "label": "Acessar Flaticon" }
+            },
+            {
+              "title": "Icons8",
+              "description": "Ícones consistentes cobrindo todos os estilos do iOS, Windows e Material Design. Oferece ilustrações em 3D também.",
+              "link": { "url": "https://icons8.com", "label": "Acessar Icons8" }
+            },
+            {
+              "title": "Material Symbols",
+              "description": "Os novos ícones dinâmicos do Google, permitindo alterar espessura e preenchimento via CSS."
+            }
+          ],
+          "linux": [
+            {
+              "title": "Google Fonts",
+              "description": "O melhor lugar para encontrar tipografias completas e gratuitas (Inter, Roboto, Poppins, etc). No Next.js, use o pacote \"next/font/google\".",
+              "link": { "url": "https://fonts.google.com", "label": "Acessar Google Fonts" }
+            },
+            {
+              "title": "Flaticon",
+              "description": "Maior repositório de ícones vetoriais criativos (estilo cartoon, 3D, linha). Excelente para ilustrações de marketing.",
+              "link": { "url": "https://www.flaticon.com", "label": "Acessar Flaticon" }
+            },
+            {
+              "title": "Icons8",
+              "description": "Ícones consistentes cobrindo todos os estilos do iOS, Windows e Material Design. Oferece ilustrações em 3D também.",
+              "link": { "url": "https://icons8.com", "label": "Acessar Icons8" }
+            },
+            {
+              "title": "Material Symbols",
+              "description": "Os novos ícones dinâmicos do Google, permitindo alterar espessura e preenchimento via CSS."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "slug": "nextauth",
+    "name": "NextAuth.js",
+    "category": "Autenticação",
+    "tagline": "Autenticação para Next.js",
+    "description": "Solução completa open-source para autenticação no Next.js. Suporta dezenas de provedores (GitHub, Google, Email) e banco de dados nativo.",
+    "level": "intermediario",
+    "color": "#000000",
+    "iconUrl": "https://next-auth.js.org/img/logo/logo-sm.png",
+    "tags": [
+      "auth",
+      "login",
+      "github",
+      "security"
+    ],
+    "docsUrl": "https://next-auth.js.org/getting-started/introduction",
+    "commands": [
+      {
+        "id": "nextauth-install",
+        "label": "Instalar NextAuth",
+        "command": "npm install next-auth @next-auth/prisma-adapter",
+        "description": "Instala o pacote principal do NextAuth e o adaptador para Prisma.",
+        "whenToUse": "Quando for configurar o sistema de autenticação com persistência no banco.",
+        "tags": [
+          "install",
+          "setup"
+        ]
+      }
+    ],
+    "tutorials": [
+      {
+        "id": "tut-nextauth-github",
+        "title": "Integração de Login com GitHub (OAuth)",
+        "description": "Passo a passo para permitir que os usuários façam login com o GitHub no seu app.",
+        "content": {
+          "windows": [
+            {
+              "title": "1. Criar OAuth App no GitHub",
+              "description": "Vá no GitHub > Settings > Developer settings > OAuth Apps > New OAuth App. Coloque a Homepage URL como http://localhost:3000 e a Callback URL como http://localhost:3000/api/auth/callback/github."
+            },
+            {
+              "title": "2. Pegar as Chaves",
+              "description": "Copie o \"Client ID\" gerado e clique em \"Generate a new client secret\" para copiar a Secret."
+            },
+            {
+              "title": "3. Adicionar no .env",
+              "description": "Cole as chaves no seu .env.",
+              "command": "GITHUB_ID=\"seu_id\"\\nGITHUB_SECRET=\"sua_secret\""
+            },
+            {
+              "title": "4. Criar a Rota da API",
+              "description": "Crie o arquivo app/api/auth/[...nextauth]/route.ts e exporte o handler do NextAuth passando o GithubProvider nas opções e o PrismaAdapter para salvar os usuários no banco."
+            },
+            {
+              "title": "5. Proteger e Exibir Sessão",
+              "description": "Envolva a aplicação com <SessionProvider> (use \"use client\" num wrapper) e use o hook useSession() nos componentes para checar se o usuário está logado."
+            }
+          ],
+          "mac": [
+            {
+              "title": "1. Criar OAuth App no GitHub",
+              "description": "Vá no GitHub > Settings > Developer settings > OAuth Apps > New OAuth App. Coloque a Homepage URL como http://localhost:3000 e a Callback URL como http://localhost:3000/api/auth/callback/github."
+            },
+            {
+              "title": "2. Pegar as Chaves",
+              "description": "Copie o \"Client ID\" gerado e clique em \"Generate a new client secret\" para copiar a Secret."
+            },
+            {
+              "title": "3. Adicionar no .env",
+              "description": "Cole as chaves no seu .env.",
+              "command": "GITHUB_ID=\"seu_id\"\\nGITHUB_SECRET=\"sua_secret\""
+            },
+            {
+              "title": "4. Criar a Rota da API",
+              "description": "Crie o arquivo app/api/auth/[...nextauth]/route.ts e exporte o handler do NextAuth passando o GithubProvider nas opções e o PrismaAdapter para salvar os usuários no banco."
+            },
+            {
+              "title": "5. Proteger e Exibir Sessão",
+              "description": "Envolva a aplicação com <SessionProvider> (use \"use client\" num wrapper) e use o hook useSession() nos componentes para checar se o usuário está logado."
+            }
+          ],
+          "linux": [
+            {
+              "title": "1. Criar OAuth App no GitHub",
+              "description": "Vá no GitHub > Settings > Developer settings > OAuth Apps > New OAuth App. Coloque a Homepage URL como http://localhost:3000 e a Callback URL como http://localhost:3000/api/auth/callback/github."
+            },
+            {
+              "title": "2. Pegar as Chaves",
+              "description": "Copie o \"Client ID\" gerado e clique em \"Generate a new client secret\" para copiar a Secret."
+            },
+            {
+              "title": "3. Adicionar no .env",
+              "description": "Cole as chaves no seu .env.",
+              "command": "GITHUB_ID=\"seu_id\"\\nGITHUB_SECRET=\"sua_secret\""
+            },
+            {
+              "title": "4. Criar a Rota da API",
+              "description": "Crie o arquivo app/api/auth/[...nextauth]/route.ts e exporte o handler do NextAuth passando o GithubProvider nas opções e o PrismaAdapter para salvar os usuários no banco."
+            },
+            {
+              "title": "5. Proteger e Exibir Sessão",
+              "description": "Envolva a aplicação com <SessionProvider> (use \"use client\" num wrapper) e use o hook useSession() nos componentes para checar se o usuário está logado."
+            }
+          ]
+        }
+      },
+      {
+        "id": "tut-nextauth-vercel",
+        "title": "Deploy na Vercel com GitHub OAuth",
+        "description": "Como configurar as chaves e URLs para o login funcionar perfeitamente em produção.",
+        "content": {
+          "windows": [
+            {
+              "title": "1. Novo OAuth App (Recomendado)",
+              "description": "No GitHub, crie um novo OAuth App chamado 'SeuApp (Prod)'. Assim você mantém o de localhost intacto para continuar desenvolvendo."
+            },
+            {
+              "title": "2. URLs de Produção",
+              "description": "Configure a Homepage URL para o seu domínio oficial (ex: https://meu-app.vercel.app) e a Callback URL adicionando /api/auth/callback/github no final."
+            },
+            {
+              "title": "3. Variáveis de Ambiente na Vercel",
+              "description": "No painel da Vercel, acesse Settings > Environment Variables e copie as chaves GITHUB_ID, GITHUB_SECRET, e a sua DATABASE_URL do Neon."
+            },
+            {
+              "title": "4. Ajustar NEXTAUTH_URL",
+              "description": "Certifique-se de definir a variável NEXTAUTH_URL com a URL de produção. Sem isso, o NextAuth pode redirecionar os usuários incorretamente."
+            },
+            {
+              "title": "5. Novo Secret",
+              "description": "Crie uma nova senha segura para a variável NEXTAUTH_SECRET (você pode gerar no terminal usando 'openssl rand -base64 32') e adicione na Vercel."
+            }
+          ],
+          "mac": [
+            {
+              "title": "1. Novo OAuth App (Recomendado)",
+              "description": "No GitHub, crie um novo OAuth App chamado 'SeuApp (Prod)'. Assim você mantém o de localhost intacto para continuar desenvolvendo."
+            },
+            {
+              "title": "2. URLs de Produção",
+              "description": "Configure a Homepage URL para o seu domínio oficial (ex: https://meu-app.vercel.app) e a Callback URL adicionando /api/auth/callback/github no final."
+            },
+            {
+              "title": "3. Variáveis de Ambiente na Vercel",
+              "description": "No painel da Vercel, acesse Settings > Environment Variables e copie as chaves GITHUB_ID, GITHUB_SECRET, e a sua DATABASE_URL do Neon."
+            },
+            {
+              "title": "4. Ajustar NEXTAUTH_URL",
+              "description": "Certifique-se de definir a variável NEXTAUTH_URL com a URL de produção. Sem isso, o NextAuth pode redirecionar os usuários incorretamente."
+            },
+            {
+              "title": "5. Novo Secret",
+              "description": "Crie uma nova senha segura para a variável NEXTAUTH_SECRET (você pode gerar no terminal usando 'openssl rand -base64 32') e adicione na Vercel."
+            }
+          ],
+          "linux": [
+            {
+              "title": "1. Novo OAuth App (Recomendado)",
+              "description": "No GitHub, crie um novo OAuth App chamado 'SeuApp (Prod)'. Assim você mantém o de localhost intacto para continuar desenvolvendo."
+            },
+            {
+              "title": "2. URLs de Produção",
+              "description": "Configure a Homepage URL para o seu domínio oficial (ex: https://meu-app.vercel.app) e a Callback URL adicionando /api/auth/callback/github no final."
+            },
+            {
+              "title": "3. Variáveis de Ambiente na Vercel",
+              "description": "No painel da Vercel, acesse Settings > Environment Variables e copie as chaves GITHUB_ID, GITHUB_SECRET, e a sua DATABASE_URL do Neon."
+            },
+            {
+              "title": "1. Novo OAuth App (Recomendado)",
+              "description": "No GitHub, crie um novo OAuth App chamado 'SeuApp (Prod)'. Assim você mantém o de localhost intacto para continuar desenvolvendo."
+            },
+            {
+              "title": "2. URLs de Produção",
+              "description": "Configure a Homepage URL para o seu domínio oficial (ex: https://meu-app.vercel.app) e a Callback URL adicionando /api/auth/callback/github no final."
+            },
+            {
+              "title": "3. Variáveis de Ambiente na Vercel",
+              "description": "No painel da Vercel, acesse Settings > Environment Variables e copie as chaves GITHUB_ID, GITHUB_SECRET, e a sua DATABASE_URL do Neon."
+            },
+            {
+              "title": "4. Ajustar NEXTAUTH_URL",
+              "description": "Certifique-se de definir a variável NEXTAUTH_URL com a URL de produção. Sem isso, o NextAuth pode redirecionar os usuários incorretamente."
+            },
+            {
+              "title": "5. Novo Secret",
+              "description": "Crie uma nova senha segura para a variável NEXTAUTH_SECRET (você pode gerar no terminal usando 'openssl rand -base64 32') e adicione na Vercel."
+            }
+          ]
+        }
+      }
+    ]
+  }
+
 ]
 
 export const stacks: Stack[] = [
@@ -786,8 +1379,6 @@ export function getTechnology(slug: string) {
 export function getStack(slug: string) {
   return stacks.find((s) => s.slug === slug)
 }
-
-export type CommandWithTech = Command & { tech: Technology }
 
 export const allCommands: CommandWithTech[] = technologies.flatMap((tech) =>
   tech.commands.map((command) => ({ ...command, tech })),

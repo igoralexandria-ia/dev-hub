@@ -1,9 +1,13 @@
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
-import type { Technology } from '@/lib/data'
+import type { Technology } from '@/types/models'
 import { LevelBadge } from '@/components/level-badge'
 
-export function TechCard({ tech }: { tech: Technology }) {
+interface TechCardProps {
+  tech: Technology
+}
+
+export function TechCard({ tech }: TechCardProps) {
   return (
     <Link
       href={`/tecnologias/${tech.slug}`}

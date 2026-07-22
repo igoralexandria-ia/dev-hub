@@ -1,4 +1,4 @@
-import type { StackStep } from '@/lib/data'
+import type { StackStep } from '@/types/models'
 
 // Ordem lógica de aplicação dos passos de setup
 const order = [
@@ -12,6 +12,14 @@ const order = [
   'prisma',
   'postgresql',
   'docker',
+  'nextauth',
+  'shadcnui',
+  'materialui',
+  'chakraui',
+  'flowbite',
+  'lucide',
+  'fontawesome',
+  'googlefonts'
 ]
 
 const recipes: Record<string, StackStep[]> = {
@@ -90,6 +98,61 @@ const recipes: Record<string, StackStep[]> = {
       description: 'Orquestre app e banco em containers (requer docker-compose.yml).',
     },
   ],
+  nextauth: [
+    {
+      title: 'Configurar NextAuth',
+      command: 'npm install next-auth @next-auth/prisma-adapter',
+      description: 'Instale os pacotes e crie o arquivo app/api/auth/[...nextauth]/route.ts.',
+    },
+  ],
+  shadcnui: [
+    {
+      title: 'Inicializar Shadcn UI',
+      command: 'npx shadcn@latest init',
+      description: 'Responda as perguntas de configuração inicial do Shadcn.',
+    },
+  ],
+  materialui: [
+    {
+      title: 'Instalar Material UI',
+      command: 'npm install @mui/material @emotion/react @emotion/styled',
+      description: 'Pacotes base do MUI. Se precisar de ícones, instale @mui/icons-material.',
+    },
+  ],
+  chakraui: [
+    {
+      title: 'Instalar Chakra UI',
+      command: 'npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion',
+      description: 'Configure o ChakraProvider na raiz da sua aplicação após a instalação.',
+    },
+  ],
+  flowbite: [
+    {
+      title: 'Instalar Flowbite',
+      command: 'npm install flowbite flowbite-react',
+      description: 'Adicione o plugin do flowbite no seu tailwind.config.ts.',
+    },
+  ],
+  lucide: [
+    {
+      title: 'Instalar Lucide Icons',
+      command: 'npm install lucide-react',
+      description: 'Componentes vetoriais prontos para o React.',
+    },
+  ],
+  fontawesome: [
+    {
+      title: 'Instalar Font Awesome',
+      command: 'npm i --save @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome',
+      description: 'Coleção de ícones sólidos do FontAwesome.',
+    },
+  ],
+  googlefonts: [
+    {
+      title: 'Usar Google Fonts no Next.js',
+      description: 'Use o pacote next/font/google para importar fontes automaticamente no arquivo layout.tsx, sem precisar fazer download manual.',
+    },
+  ]
 }
 
 export function generateSetup(selected: string[]): StackStep[] {

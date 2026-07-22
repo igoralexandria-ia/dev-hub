@@ -1,6 +1,7 @@
 'use client'
 
 import { Heart } from 'lucide-react'
+import { useSession, signIn } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { useFavorites, type FavoriteType } from '@/lib/use-favorites'
 
@@ -13,13 +14,22 @@ export function FavoriteButton({
   refId: string
   className?: string
 }) {
+  const { status } = useSession()
   const { isFavorite, toggleFavorite } = useFavorites()
   const active = isFavorite(type, refId)
+
+  function handleClick() {
+    if (status === 'unauthenticated') {
+      signIn('github')
+      return
+    }
+    toggleFavorite(type, refId)
+  }
 
   return (
     <button
       type="button"
-      onClick={() => toggleFavorite(type, refId)}
+      onClick={handleClick}
       aria-pressed={active}
       aria-label={active ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
       className={cn(

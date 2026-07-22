@@ -2,10 +2,14 @@
 
 import { useState } from 'react'
 import { Check, ClipboardList } from 'lucide-react'
-import type { StackStep } from '@/lib/data'
-import { CopyButton } from '@/components/copy-button'
+import type { StackStep } from '@/types/models'
+import { CodeSnippet } from '@/components/ui/code-snippet'
 
-export function SetupSteps({ steps }: { steps: StackStep[] }) {
+interface SetupStepsProps {
+  steps: StackStep[]
+}
+
+export function SetupSteps({ steps }: SetupStepsProps) {
   const [copiedAll, setCopiedAll] = useState(false)
   const allCommands = steps
     .map((s) => s.command)
@@ -54,21 +58,13 @@ export function SetupSteps({ steps }: { steps: StackStep[] }) {
               )}
             </div>
 
-            <div className="flex-1 pb-2">
+            <div className="flex-1 pb-2 min-w-0">
               <h3 className="font-medium text-foreground">{step.title}</h3>
               <p className="mt-0.5 text-sm text-muted-foreground text-pretty">
                 {step.description}
               </p>
               {step.command && (
-                <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-background/60 p-2">
-                  <span className="select-none pl-1 font-mono text-sm text-primary">
-                    $
-                  </span>
-                  <code className="flex-1 overflow-x-auto whitespace-nowrap font-mono text-sm text-foreground">
-                    {step.command}
-                  </code>
-                  <CopyButton value={step.command} className="shrink-0" />
-                </div>
+                <CodeSnippet code={step.command} variant="simple" />
               )}
             </div>
           </li>

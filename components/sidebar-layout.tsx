@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { technologies } from '@/lib/data'
 import { cn } from '@/lib/utils'
+import { UserProfile } from './user-profile'
+import { SiteFooter } from '@/components/site-footer'
 
 export function SidebarLayout({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -102,6 +104,10 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
               </div>
             ))}
           </div>
+          
+          <div className="mt-8 pt-6 border-t border-border/50">
+            <UserProfile />
+          </div>
         </div>
       </aside>
 
@@ -130,6 +136,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
         <main className="flex-1">
           {children}
         </main>
+        <SiteFooter />
       </div>
     </div>
   )

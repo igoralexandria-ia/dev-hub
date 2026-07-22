@@ -1,14 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { Monitor, Apple, Command as CommandIcon, Download, TerminalSquare, ExternalLink } from 'lucide-react'
+import { Monitor, Apple, Command as CommandIcon, Download, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Tutorial, TutorialStep, OsCommand } from '@/lib/data'
-import { CopyButton } from '@/components/copy-button'
+import type { Tutorial, OsCommand } from '@/types/models'
+import { CodeSnippet } from '@/components/ui/code-snippet'
 
 type OsType = 'windows' | 'mac' | 'linux'
 
-export function TutorialCard({ tutorial }: { tutorial: Tutorial }) {
+interface TutorialCardProps {
+  tutorial: Tutorial
+}
+
+export function TutorialCard({ tutorial }: TutorialCardProps) {
   const [activeOs, setActiveOs] = useState<OsType>('windows')
 
   const steps = tutorial.content[activeOs] || []
@@ -81,27 +85,13 @@ export function TutorialCard({ tutorial }: { tutorial: Tutorial }) {
                   </p>
                 </div>
 
-                {/* Exibição do Comando se existir */}
                 {step.command && (
-                  <div className="mt-3 overflow-hidden rounded-xl border border-border/50 bg-[#0A0A0A] shadow-inner">
-                    <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.02] px-3 py-2">
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <TerminalSquare className="size-3.5" />
-                        <span className="text-[10px] font-medium uppercase tracking-widest">
-                          Terminal
-                        </span>
-                      </div>
-                      <CopyButton value={renderCommandStr(step.command)} className="size-6 text-muted-foreground bg-transparent hover:bg-white/10 hover:text-white" />
-                    </div>
-                    <div className="p-3 overflow-x-auto">
-                      <div className="flex items-center gap-3">
-                        <span className="select-none font-mono text-sm text-emerald-400">➜</span>
-                        <code className="flex-1 font-mono text-sm text-gray-200">
-                          {renderCommandStr(step.command)}
-                        </code>
-                      </div>
-                    </div>
-                  </div>
+                  <CodeSnippet
+                    code={renderCommandStr(step.command)}
+                    variant="terminal"
+                    title="Terminal"
+                    prefix={<span className="select-none font-mono text-sm text-emerald-400">➜</span>}
+                  />
                 )}
 
                 {/* Exibição do Link se existir */}

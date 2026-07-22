@@ -1,7 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { technologies, levelLabels, type Level } from '@/lib/data'
+import type { Level } from '@/types/models'
+import { levelLabels, technologies } from '@/lib/data'
 import { TechCard } from '@/components/tech-card'
 import { cn } from '@/lib/utils'
 

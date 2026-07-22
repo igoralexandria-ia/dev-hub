@@ -7,7 +7,6 @@ import { GlobalSearch } from '@/components/global-search'
 import { TechCard } from '@/components/tech-card'
 import { StackCard } from '@/components/stack-card'
 import { CommandCard } from '@/components/command-card'
-import { cn } from '@/lib/utils'
 import {
   technologies,
   stacks,

@@ -3,27 +3,28 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Info, Lightbulb, Monitor, Apple, Command as CommandIcon } from 'lucide-react'
-import type { Command, Technology } from '@/lib/data'
-import { CopyButton } from '@/components/copy-button'
+import type { Command, Technology } from '@/types/models'
 import { FavoriteButton } from '@/components/favorite-button'
+import { CodeSnippet } from '@/components/ui/code-snippet'
 import { cn } from '@/lib/utils'
 
 type OsType = 'windows' | 'mac' | 'linux'
+
+interface CommandCardProps {
+  command: Command
+  tech?: Technology
+  showTech?: boolean
+}
 
 export function CommandCard({
   command,
   tech,
   showTech = false,
-}: {
-  command: Command
-  tech?: Technology
-  showTech?: boolean
-}) {
+}: CommandCardProps) {
   const [activeOs, setActiveOs] = useState<OsType>('windows')
 
   const isOsCommand = typeof command.command === 'object'
   
-  // Resolve which string to show based on state and availability
   let displayCommandStr = ''
   if (!isOsCommand) {
     displayCommandStr = command.command as string
@@ -57,16 +58,11 @@ export function CommandCard({
       </div>
 
       {/* Terminal Block */}
-      <div className="mt-5 overflow-hidden rounded-xl border border-border/50 bg-[#0A0A0A] shadow-inner">
-        {/* Window Header */}
-        <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.02] px-4 py-2.5">
-          <div className="flex gap-1.5 shrink-0">
-            <div className="size-2.5 rounded-full bg-rose-500/80" />
-            <div className="size-2.5 rounded-full bg-amber-500/80" />
-            <div className="size-2.5 rounded-full bg-emerald-500/80" />
-          </div>
-          {/* OS Tabs */}
-          <div className="flex bg-black/20 p-0.5 rounded-md border border-white/5">
+      <CodeSnippet
+        code={displayCommandStr}
+        variant="terminal"
+        headerRight={
+          <div className="flex bg-black/20 p-0.5 rounded-md border border-white/5 mx-auto">
             {(['windows', 'mac', 'linux'] as OsType[]).map((os) => {
               return (
                 <button
@@ -87,22 +83,14 @@ export function CommandCard({
               )
             })}
           </div>
-
-          <div className="w-10 flex justify-end shrink-0">
-             <CopyButton value={displayCommandStr} className="size-6 bg-transparent hover:bg-white/10 text-muted-foreground hover:text-white cursor-pointer" />
-          </div>
-        </div>
-        {/* Code Area */}
-        <div className="p-4 overflow-x-auto">
-          <div className="flex items-center gap-3">
+        }
+        prefix={
+          <>
             <span className="select-none font-mono text-sm text-emerald-400">➜</span>
             <span className="select-none font-mono text-sm text-cyan-400">~</span>
-            <code className="flex-1 font-mono text-sm text-gray-200">
-              {displayCommandStr}
-            </code>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       <div className="mt-5 space-y-3">
         <div className="flex items-start gap-2.5 text-sm text-muted-foreground">

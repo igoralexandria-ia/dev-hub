@@ -228,6 +228,18 @@ export const technologies: Technology[] = [
         tags: ['salvar', 'historico']
       },
       {
+        id: 'git-retroactive',
+        label: 'Commit Retroativo (Time Travel)',
+        command: {
+          default: 'GIT_AUTHOR_DATE="2023-01-01T12:00:00" GIT_COMMITTER_DATE="2023-01-01T12:00:00" git commit -m "commit no passado"',
+          windows: '$env:GIT_AUTHOR_DATE="2023-01-01T12:00:00"; $env:GIT_COMMITTER_DATE="2023-01-01T12:00:00"; git commit -m "commit no passado"'
+        },
+        description: 'Cria um commit forjando uma data específica (passado ou futuro). O GitHub respeitará essa data no histórico e nos quadradinhos de contribuição.',
+        whenToUse: 'Útil para refletir o dia exato em que o trabalho foi feito (ex: se trabalhou offline) ou simular um histórico de desenvolvimento orgânico.',
+        example: 'GIT_AUTHOR_DATE="2026-07-13T10:00" GIT_COMMITTER_DATE="2026-07-13T10:00" git commit -m "feat: setup inicial"',
+        tags: ['truque', 'historico', 'data', 'commit']
+      },
+      {
         id: 'git-push',
         label: 'Enviar (Push)',
         command: 'git push -u origin main',

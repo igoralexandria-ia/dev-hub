@@ -22,7 +22,7 @@ const order = [
   'googlefonts'
 ]
 
-const recipes: Record<string, StackStep[]> = {
+export const recipes: Record<string, StackStep[]> = {
   nextjs: [
     {
       title: 'Criar o projeto Next.js',

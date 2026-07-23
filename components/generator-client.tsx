@@ -2,21 +2,63 @@
 
 import { useState } from 'react'
 import { Check, Wand2 } from 'lucide-react'
-import { technologies } from '@/lib/data'
-import { generateSetup } from '@/lib/generator'
+import type { Technology, CommandWithTech, StackStep } from '@/types/models'
 import { SetupSteps } from '@/components/setup-steps'
+import { TechCommandsModal } from '@/components/tech-commands-modal'
+import { recipes } from '@/lib/generator'
 import { cn } from '@/lib/utils'
 
-export function GeneratorClient() {
-  const [selected, setSelected] = useState<string[]>([])
+interface GeneratorClientProps {
+  initialTechnologies: Technology[]
+  allCommands?: CommandWithTech[]
+}
 
-  function toggle(slug: string) {
-    setSelected((prev) =>
-      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug],
-    )
+export function GeneratorClient({ initialTechnologies, allCommands = [] }: GeneratorClientProps) {
+  
+  const [selectedTechs, setSelectedTechs] = useState<string[]>([])
+  const [techStepsMap, setTechStepsMap] = useState<Record<string, StackStep[]>>({})
+  
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalTech, setModalTech] = useState<Technology | null>(null)
+  
+  function handleTechClick(tech: Technology) {
+    const isSelected = selectedTechs.includes(tech.slug)
+    
+    if (isSelected) {
+      setSelectedTechs(prev => prev.filter(s => s !== tech.slug))
+      setTechStepsMap(prev => {
+        const next = { ...prev }
+        delete next[tech.id!]
+        return next
+      })
+    } else {
+      setModalTech(tech)
+      setIsModalOpen(true)
+    }
   }
 
-  const steps = generateSetup(selected)
+  function handleModalConfirm(steps: StackStep[]) {
+    if (modalTech) {
+      if (steps.length > 0) {
+        setSelectedTechs(prev => prev.includes(modalTech.slug) ? prev : [...prev, modalTech.slug])
+        setTechStepsMap(prev => ({ ...prev, [modalTech.id!]: steps }))
+      } else {
+        setSelectedTechs(prev => prev.filter(s => s !== modalTech.slug))
+        setTechStepsMap(prev => {
+          const next = { ...prev }
+          delete next[modalTech.id!]
+          return next
+        })
+      }
+    }
+    setIsModalOpen(false)
+    setModalTech(null)
+  }
+
+  const steps: StackStep[] = selectedTechs.flatMap(slug => {
+    const tech = initialTechnologies.find(t => t.slug === slug)
+    return tech && tech.id ? (techStepsMap[tech.id] || []) : []
+  })
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1.2fr_1.5fr] items-start">
@@ -31,9 +73,12 @@ export function GeneratorClient() {
               Escolha sua Stack
             </h2>
           </div>
-          {selected.length > 0 && (
+          {selectedTechs.length > 0 && (
             <button
-              onClick={() => setSelected([])}
+              onClick={() => {
+                setSelectedTechs([])
+                setTechStepsMap({})
+              }}
               className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors cursor-pointer"
             >
               Limpar escolhas
@@ -42,13 +87,13 @@ export function GeneratorClient() {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          {technologies.map((tech) => {
-            const active = selected.includes(tech.slug)
+          {initialTechnologies.map((tech) => {
+            const active = selectedTechs.includes(tech.slug)
             return (
               <button
                 key={tech.slug}
                 type="button"
-                onClick={() => toggle(tech.slug)}
+                onClick={() => handleTechClick(tech)}
                 aria-pressed={active}
                 className={cn(
                   'cursor-pointer group relative flex items-center gap-3 overflow-hidden rounded-xl border p-3 text-left transition-all duration-300',
@@ -125,6 +170,40 @@ export function GeneratorClient() {
           )}
         </div>
       </div>
+
+      <TechCommandsModal 
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setModalTech(null)
+        }}
+        tech={modalTech}
+        commands={
+          modalTech 
+            ? (() => {
+                const dbCommands = allCommands.filter(c => c.tech.id === modalTech.id)
+                if (dbCommands.length > 0) return dbCommands
+                
+                // Fallback para recipes hardcoded caso nao haja comandos no banco
+                const fallback = recipes[modalTech.slug]
+                if (fallback) {
+                  return fallback.map((step, idx) => ({
+                    id: `fallback-${idx}`,
+                    label: step.title,
+                    description: step.description,
+                    command: step.command || '',
+                    tech: modalTech,
+                    whenToUse: '',
+                    tags: []
+                  } as CommandWithTech))
+                }
+                return []
+              })()
+            : []
+        }
+        onConfirm={handleModalConfirm}
+        initialSelectedSteps={modalTech?.id ? techStepsMap[modalTech.id] : []}
+      />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu, X, ChevronRight, LayoutDashboard, Terminal, Compass } from 'lucide-react'
+import { Menu, X, ChevronRight, LayoutDashboard, Terminal, Compass, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { technologies } from '@/lib/data'
@@ -72,6 +72,16 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
               >
                 <Compass className="size-4" />
                 Explorar Tudo
+              </Link>
+              <Link 
+                href="/contribuir"
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors cursor-pointer",
+                  pathname === '/contribuir' ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                <Sparkles className="size-4 text-amber-500" />
+                Contribuir
               </Link>
             </div>
 

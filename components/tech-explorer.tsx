@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import type { Level } from '@/types/models'
-import { levelLabels, technologies } from '@/lib/data'
+import type { Level, Technology } from '@/types/models'
+import { levelLabels } from '@/lib/data'
 import { TechCard } from '@/components/tech-card'
 import { cn } from '@/lib/utils'
 
@@ -13,16 +13,20 @@ const levels: (Level | 'todos')[] = [
   'avancado',
 ]
 
-export function TechExplorer() {
+interface TechExplorerProps {
+  initialTechnologies: Technology[]
+}
+
+export function TechExplorer({ initialTechnologies }: TechExplorerProps) {
   const [level, setLevel] = useState<Level | 'todos'>('todos')
   const [category, setCategory] = useState<string>('todas')
 
   const categories = useMemo(
-    () => ['todas', ...Array.from(new Set(technologies.map((t) => t.category)))],
-    [],
+    () => ['todas', ...Array.from(new Set(initialTechnologies.map((t) => t.category)))],
+    [initialTechnologies],
   )
 
-  const filtered = technologies.filter((t) => {
+  const filtered = initialTechnologies.filter((t) => {
     const matchLevel = level === 'todos' || t.level === level
     const matchCategory = category === 'todas' || t.category === category
     return matchLevel && matchCategory

@@ -4,11 +4,15 @@ import { useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+import { incrementCommandCopyCount } from '@/lib/actions'
+
 export function CopyButton({
   value,
+  commandId,
   className,
 }: {
   value: string
+  commandId?: string
   className?: string
 }) {
   const [copied, setCopied] = useState(false)
@@ -17,6 +21,11 @@ export function CopyButton({
     try {
       await navigator.clipboard.writeText(value)
       setCopied(true)
+      
+      if (commandId) {
+        incrementCommandCopyCount(commandId).catch(() => {})
+      }
+      
       setTimeout(() => setCopied(false), 1500)
     } catch {
       // ignore clipboard errors

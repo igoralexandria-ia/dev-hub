@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
 import { GeneratorClient } from '@/components/generator-client'
+import { getTechnologies, getAllCommandsWithTech } from '@/lib/actions'
 
 export const metadata: Metadata = {
   title: 'Gerador de setup — DevHub',
   description: 'Selecione tecnologias e gere um setup passo a passo com comandos prontos.',
 }
 
-export default function GeradorPage() {
+export default async function GeradorPage() {
+  const technologies = await getTechnologies()
+  const allCommands = await getAllCommandsWithTech()
+
   return (
     <main className="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:px-6">
       <div className="mb-10 text-center sm:text-left">
@@ -19,7 +23,10 @@ export default function GeradorPage() {
         </p>
       </div>
       <div className="mt-8">
-        <GeneratorClient />
+        <GeneratorClient 
+          initialTechnologies={technologies} 
+          allCommands={allCommands}
+        />
       </div>
     </main>
   )

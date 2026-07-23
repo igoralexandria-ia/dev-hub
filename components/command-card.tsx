@@ -23,14 +23,26 @@ export function CommandCard({
 }: CommandCardProps) {
   const [activeOs, setActiveOs] = useState<OsType>('windows')
 
-  const isOsCommand = typeof command.command === 'object'
+  let parsedCommand = command.command
+  if (typeof parsedCommand === 'string') {
+    try {
+      const p = JSON.parse(parsedCommand)
+      if (p && typeof p === 'object') {
+        parsedCommand = p
+      }
+    } catch {
+      // Is just a normal string
+    }
+  }
+
+  const isOsCommand = typeof parsedCommand === 'object' && parsedCommand !== null && ('windows' in parsedCommand || 'mac' in parsedCommand || 'linux' in parsedCommand || 'default' in parsedCommand)
   
   let displayCommandStr = ''
   if (!isOsCommand) {
-    displayCommandStr = command.command as string
+    displayCommandStr = typeof parsedCommand === 'string' ? parsedCommand : String(parsedCommand)
   } else {
-    const osCmd = command.command as any
-    displayCommandStr = osCmd[activeOs] || osCmd.default
+    const osCmd = parsedCommand as any
+    displayCommandStr = osCmd[activeOs] || osCmd.default || ''
   }
 
   return (
@@ -57,32 +69,34 @@ export function CommandCard({
         </div>
       </div>
 
-      {/* Terminal Block */}
       <CodeSnippet
         code={displayCommandStr}
+        commandId={command.id}
         variant="terminal"
         headerRight={
-          <div className="flex bg-black/20 p-0.5 rounded-md border border-white/5 mx-auto">
-            {(['windows', 'mac', 'linux'] as OsType[]).map((os) => {
-              return (
-                <button
-                  key={os}
-                  onClick={() => setActiveOs(os)}
-                  className={cn(
-                    "cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-medium uppercase tracking-wider transition-all",
-                    activeOs === os 
-                      ? "bg-white/10 text-white shadow-sm" 
-                      : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-white/5"
-                  )}
-                >
-                  {os === 'windows' && <Monitor className="size-3" />}
-                  {os === 'mac' && <Apple className="size-3" />}
-                  {os === 'linux' && <CommandIcon className="size-3" />}
-                  {os}
-                </button>
-              )
-            })}
-          </div>
+          isOsCommand ? (
+            <div className="flex bg-black/20 p-0.5 rounded-md border border-white/5 mx-auto">
+              {(['windows', 'mac', 'linux'] as OsType[]).map((os) => {
+                return (
+                  <button
+                    key={os}
+                    onClick={() => setActiveOs(os)}
+                    className={cn(
+                      "cursor-pointer flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-medium uppercase tracking-wider transition-all",
+                      activeOs === os 
+                        ? "bg-white/10 text-white shadow-sm" 
+                        : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-white/5"
+                    )}
+                  >
+                    {os === 'windows' && <Monitor className="size-3" />}
+                    {os === 'mac' && <Apple className="size-3" />}
+                    {os === 'linux' && <CommandIcon className="size-3" />}
+                    {os}
+                  </button>
+                )
+              })}
+            </div>
+          ) : undefined
         }
         prefix={
           <>

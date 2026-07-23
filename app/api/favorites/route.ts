@@ -46,7 +46,7 @@ export async function POST(request: Request) {
   }
 
   const command = await prisma.command.findUnique({
-    where: { commandId: refId }
+    where: { id: refId }
   })
 
   if (!command) {

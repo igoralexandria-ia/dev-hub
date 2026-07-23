@@ -1,45 +1,29 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 
 export function GlobalSearch({
-  autoFocus = false,
-  placeholder = 'Buscar tecnologia ou ação (ex: "next", "instalar")',
+  placeholder = 'Buscar tecnologia ou comando... (Ctrl+K)',
 }: {
-  autoFocus?: boolean
   placeholder?: string
 }) {
-  const router = useRouter()
-  const [value, setValue] = useState('')
-
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault()
-    const q = value.trim()
-    if (q) {
-      router.push(`/busca?q=${encodeURIComponent(q)}`)
-    }
+  function handleClick() {
+    document.dispatchEvent(new CustomEvent('open-command-menu'))
   }
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full">
-      <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-      <input
-        type="search"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        autoFocus={autoFocus}
-        placeholder={placeholder}
-        aria-label="Busca global"
-        className="h-14 w-full rounded-xl border border-border bg-card pl-12 pr-24 text-base text-foreground shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/50 focus:ring-2 focus:ring-ring/30"
-      />
-      <button
-        type="submit"
-        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-      >
-        Buscar
-      </button>
-    </form>
+    <button
+      type="button"
+      onClick={handleClick}
+      aria-label="Abrir busca global"
+      className="group relative flex w-full items-center h-14 rounded-xl border border-border bg-card px-4 text-base text-muted-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-card/80 hover:text-foreground"
+    >
+      <Search className="size-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+      <span className="ml-3 truncate">{placeholder}</span>
+      
+      <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-flex h-6 items-center gap-1 rounded border border-border bg-muted px-2 font-mono text-[10px] font-medium text-muted-foreground transition-colors group-hover:border-primary/30 group-hover:text-primary">
+        <span className="text-xs">⌘</span>K
+      </kbd>
+    </button>
   )
 }

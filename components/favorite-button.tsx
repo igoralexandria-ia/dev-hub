@@ -1,9 +1,11 @@
 'use client'
 
 import { Heart } from 'lucide-react'
-import { useSession, signIn } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { useFavorites, type FavoriteType } from '@/lib/use-favorites'
+import { useState } from 'react'
+import { AuthModal } from '@/components/auth-modal'
 
 export function FavoriteButton({
   type,
@@ -18,16 +20,19 @@ export function FavoriteButton({
   const { isFavorite, toggleFavorite } = useFavorites()
   const active = isFavorite(type, refId)
 
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
   function handleClick() {
     if (status === 'unauthenticated') {
-      signIn('github')
+      setIsAuthModalOpen(true)
       return
     }
     toggleFavorite(type, refId)
   }
 
   return (
-    <button
+    <>
+      <button
       type="button"
       onClick={handleClick}
       aria-pressed={active}
@@ -38,7 +43,13 @@ export function FavoriteButton({
         className,
       )}
     >
-      <Heart className={cn('size-4', active && 'fill-current')} />
-    </button>
+        <Heart className={cn('size-4', active && 'fill-current')} />
+      </button>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
+    </>
   )
 }

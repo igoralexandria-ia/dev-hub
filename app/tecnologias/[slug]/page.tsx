@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
-import { getTechnology, technologies } from '@/lib/data'
+import { getTechnologyBySlug, getCommandsByTechSlug, getTechnologies } from '@/lib/actions'
 import { LevelBadge } from '@/components/level-badge'
 import { CommandCard } from '@/components/command-card'
 import { TutorialCard } from '@/components/tutorial-card'
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const technologies = await getTechnologies()
   return technologies.map((t) => ({ slug: t.slug }))
 }
 
@@ -17,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const tech = getTechnology(slug)
+  const tech = await getTechnologyBySlug(slug)
   if (!tech) return { title: 'Tecnologia não encontrada — DevHub' }
   return {
     title: `${tech.name} — DevHub`,
@@ -31,7 +32,8 @@ export default async function TecnologiaPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const tech = getTechnology(slug)
+  const tech = await getTechnologyBySlug(slug)
+  const commands = await getCommandsByTechSlug(slug)
 
   if (!tech) {
     notFound()
@@ -102,8 +104,8 @@ export default async function TecnologiaPage({
           Descrição, quando usar, parâmetros e exemplos práticos.
         </p>
         <div className="mt-5 grid gap-4">
-          {tech.commands.map((command) => (
-            <CommandCard key={command.id} command={command} />
+          {commands.map((command) => (
+            <CommandCard key={command.id} command={command} tech={tech} />
           ))}
         </div>
       </section>

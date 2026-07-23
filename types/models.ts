@@ -46,6 +46,7 @@ export type Tutorial = {
 }
 
 export type Technology = {
+  id?: string
   slug: string
   name: string
   category: string

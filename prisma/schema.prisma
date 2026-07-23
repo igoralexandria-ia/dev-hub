@@ -21,6 +21,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   favorites     Favorite[]
+  submissions   Submission[]
 }
 
 model Account {
@@ -93,6 +94,8 @@ model Command {
   techId      String
   tech        Technology @relation(fields: [techId], references: [id], onDelete: Cascade)
   
+  copyCount   Int      @default(0) // Analytics para "Comandos mais usados"
+  
   favorites   Favorite[]
 }
 
@@ -106,4 +109,20 @@ model Favorite {
   command   Command  @relation(fields: [commandId], references: [id], onDelete: Cascade)
 
   @@unique([userId, commandId])
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  type        String   // "command", "tutorial", "technology"
+  techId      String?  // Pode ser vazio se for uma tecnologia nova/outro
+  otherTech   String?  // Preenchido se techId for vazio/Outro
+  title       String
+  content     String   @db.Text
+  description String?
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
 }

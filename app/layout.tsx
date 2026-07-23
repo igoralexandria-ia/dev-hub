@@ -4,6 +4,7 @@ import { Inter, Fira_Code } from 'next/font/google'
 import { SiteHeader } from '@/components/site-header'
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { AuthProvider } from '@/components/auth-provider'
+import { CommandMenu } from '@/components/command-menu'
 import './globals.css'
 
 const fontSans = Inter({
@@ -44,6 +45,7 @@ export default function RootLayout({
           <SidebarLayout>
             {children}
           </SidebarLayout>
+          <CommandMenu />
         </AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

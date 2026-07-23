@@ -2,6 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react"
 import { LogOut } from "lucide-react"
+import Link from 'next/link'
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -25,22 +26,22 @@ export function UserProfile() {
   if (session) {
     return (
       <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-card border border-border/50 shadow-sm transition-colors hover:bg-card/80">
-        <div className="flex items-center gap-3 overflow-hidden">
+        <Link href="/perfil" className="flex items-center gap-3 overflow-hidden flex-1 group">
           {session.user?.image ? (
-            <img src={session.user.image} alt="Avatar" className="size-9 rounded-full border border-border" />
+            <img src={session.user.image} alt="Avatar" className="size-9 rounded-full border border-border transition-colors group-hover:border-primary/50" />
           ) : (
-            <div className="size-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold border border-primary/20">
+            <div className="size-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold border border-primary/20 transition-colors group-hover:border-primary/50">
               {session.user?.name?.charAt(0) || "U"}
             </div>
           )}
           <div className="text-sm truncate">
-            <p className="font-semibold truncate tracking-tight text-foreground">{session.user?.name}</p>
+            <p className="font-semibold truncate tracking-tight text-foreground transition-colors group-hover:text-primary">{session.user?.name}</p>
             <p className="text-xs text-muted-foreground truncate opacity-80">{session.user?.email}</p>
           </div>
-        </div>
+        </Link>
         <button 
-          onClick={() => signOut()} 
-          className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors" 
+          onClick={() => signOut({ callbackUrl: '/' })} 
+          className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer" 
           title="Sair da conta"
         >
           <LogOut className="size-4" />
